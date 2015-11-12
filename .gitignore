@@ -1,0 +1,5 @@
+vendor
+composer.lock
+/info.txt
+*.sublime-*
+.directory

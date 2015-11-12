@@ -1,0 +1,23 @@
+{
+    "name": "ancor/yii2-rest",
+    "description": "Advanced rest class",
+    "type": "yii2-extension",
+    "require": {
+        "yiisoft/yii2": "^2.0",
+        "ancor/yii2-data": "dev-master",
+        "ancor/yii2-model": "dev-master"
+    },
+    "license": "GPLv3",
+    "authors": [
+        {
+            "name": "Anton Korniychuk",
+            "email": "ancor.dev@gmail.com"
+        }
+    ],
+    "minimum-stability": "dev",
+    "autoload" : {
+    	"psr-4" : {
+    		"ancor\\rest\\" : "src"
+  		}
+  	}
+}
