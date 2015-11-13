@@ -28,37 +28,26 @@ class CreateAction extends _CreateAction
 
         // do reload model from database after successful insert?
         $request = Yii::$app->request;
-        $reload = $request->get('reload') || $request->get('expand');
+        $reload  = $request->get('reload') || $request->get('expand');
 
         $model->load($request->getBodyParams(), '');
         if ($model->save()) {
 
-            if ($this->afterRun !== null) {
-                call_user_func($this->afterRun, $this, $model);
-            }
-            
             $response = Yii::$app->getResponse();
             $response->setStatusCode(201);
             $id = implode(',', array_values($model->getPrimaryKey(true)));
             $response->getHeaders()->set('Location', Url::toRoute([$this->viewAction, 'id' => $id], true));
 
-            if ( $reload )
-            {
+            if ($reload) {
                 $modelClass = $this->modelClass;
                 return $modelClass::findOne($model->primaryKey);
             }
-        } elseif (!$model->hasErrors()) {
+        } elseif ( ! $model->hasErrors()) {
             throw new ServerErrorHttpException('Failed to create the object for unknown reason.');
         }
 
         return $model;
     }
-
-    /**
-     * callback
-     * @var [type]
-     */
-    public $afterRun;
 
     /**
      * @var callable a PHP callable that will be called to prepare an ActiveRecord model

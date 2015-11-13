@@ -11,13 +11,13 @@ use yii\rest\UrlRule as _UrlRule;
 class UrlRule extends _UrlRule
 {
 
-	/**
-	 * @inheritdoc
-	 */
-	public function init()
-	{
-	  $this->patterns['POST many'] = 'create-many';
-	  parent::init();
-	} // end init()
-	
+    /**
+     * @inheritdoc
+     */
+    public function init()
+    {
+        $this->patterns['POST many'] = 'create-many';
+        parent::init();
+    } // end init()
+
 }
