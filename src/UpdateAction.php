@@ -8,10 +8,7 @@ use yii\web\ServerErrorHttpException;
 use yii\rest\UpdateAction as _UpdateAction;
 
 /**
- * UpdateAction implements the API endpoint for updating a model.
- *
- * @author Qiang Xue <qiang.xue@gmail.com>
- * @since 2.0
+ * added 'reload' attribute
  */
 class UpdateAction extends _UpdateAction
 {
