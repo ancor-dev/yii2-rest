@@ -17,12 +17,12 @@ class ActiveController extends _ActiveController
     /**
      * @var mixed
      */
-    public $createScenario = ActiveRecord::SCENARIO_UPDATE;
+    public $createScenario = ActiveRecord::SCENARIO_CREATE;
 
     /**
      * @var mixed
      */
-    public $updateScenario = ActiveRecord::SCENARIO_CREATE;
+    public $updateScenario = ActiveRecord::SCENARIO_UPDATE;
 
     /**
      * @inheritdoc
