@@ -69,7 +69,7 @@ class CreateAction extends _CreateAction
 
         $request = Yii::$app->getRequest();
         $items = $request->getBodyParam($this->manyProperty);
-        $reload  = $request->get('reload') || $request->get('expand');
+        $reload  = $request->get('reload');
 
         $result = [];
         foreach ($items as $one) {
@@ -108,7 +108,7 @@ class CreateAction extends _CreateAction
 
         // do reload model from database after successful insert?
         $request = Yii::$app->request;
-        $reload  = $request->get('reload') || $request->get('expand');
+        $reload  = $request->get('reload');
 
         $model->load($request->getBodyParams(), '');
         if ($model->save()) {
