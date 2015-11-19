@@ -40,13 +40,6 @@ class ActiveController extends _ActiveController
             'create'      => [
                 'class' => 'ancor\rest\CreateAction',
             ],
-            'create-many' => [
-                'class'       => 'ancor\rest\CreateManyAction',
-                'enabled'     => false,
-                'modelClass'  => $this->modelClass,
-                'checkAccess' => [$this, 'checkAccess'],
-                'scenario'    => $this->createScenario,
-            ],
             'update'      => [
                 'class' => 'ancor\rest\UpdateAction',
             ],
