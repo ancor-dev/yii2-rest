@@ -1,7 +1,10 @@
 <?php
-namespace ancor\rest\Serializer;
+namespace ancor\rest;
 
 use Yii;
+use yii\base\Arrayable;
+use yii\base\Model;
+use yii\data\DataProviderInterface;
 use yii\rest\Serializer as _Serializer;
 use yii\web\HttpException;
 
@@ -48,18 +51,17 @@ class Serializer extends _Serializer
      */
     protected function serializeMulticreation($model)
     {
-        $this->response->setStatusCode(207, 'Multi-Status.');
         $result = [];
 
         foreach ($model as $one) {
             if ($one instanceof Model) {
-                $hasErrors = $model->hasErrors();
+                $hasErrors = $one->hasErrors();
 
                 $result[] = [
                     'status' => $hasErrors ? [422, 'Data Validation Failed.'] : [201, 'Created.'],
                     'data' => $hasErrors ?
-                              $this->serializeModelErrors($model) :
-                              $this->serializeModel($model),
+                              $this->serializeModelErrors($one) :
+                              $this->serializeModel($one),
                 ];
             } elseif ($one instanceof HttpException) {
                 $result[] = [
@@ -73,6 +75,9 @@ class Serializer extends _Serializer
                 ];
             }
         }
+
+        // Status is set at the end to rewrite previous status
+        $this->response->setStatusCode(207, 'Multi-Status.');
 
         return $result;
     }

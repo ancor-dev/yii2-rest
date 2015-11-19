@@ -32,6 +32,14 @@ class CreateAction extends _CreateAction
     protected $isMany = false;
 
     /**
+     * Getter for isMany
+     */
+    public function getIsMany()
+    {
+        return $this->isMany;
+    } // end getIsMany()
+
+    /**
      * @inheritdoc
      */
     public function run()
@@ -39,10 +47,10 @@ class CreateAction extends _CreateAction
         if ( ! $this->manyEnabled) return $this->createOne();
 
         $request = Yii::$app->getRequest();
-        $items = $request->post($this->manyProperty);
-        $this->isMany = is_array($items) && count($request->post()) === 1;
+        $items = $request->getBodyParam($this->manyProperty);
+        $this->isMany = is_array($items) && count($request->getBodyParams()) === 1;
 
-        return $this->isMany ? $this->createOne() : $this->createMany();
+        return $this->isMany ? $this->createMany() : $this->createOne();
     } // end run()
     
     /**
@@ -60,14 +68,14 @@ class CreateAction extends _CreateAction
         ]);
 
         $request = Yii::$app->getRequest();
-        $items = $request->post($this->manyProperty);
+        $items = $request->getBodyParam($this->manyProperty);
         $reload  = $request->get('reload') || $request->get('expand');
 
         $result = [];
         foreach ($items as $one) {
 
             $model = clone $preparedModel;
-            $model->load($request->getBodyParams(), '');
+            $model->load($one, '');
 
             if ($model->save()) {
                 if ($reload) {
