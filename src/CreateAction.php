@@ -5,6 +5,7 @@ use Yii;
 use yii\base\Model;
 use yii\helpers\Url;
 use yii\rest\CreateAction as _CreateAction;
+use yii\web\BadRequestHttpException;
 use yii\web\HttpException;
 use yii\web\ServerErrorHttpException;
 
@@ -62,13 +63,20 @@ class CreateAction extends _CreateAction
             call_user_func($this->checkAccess, $this->id);
         }
 
+        $items = Yii::$app->getRequest()->getBodyParam($this->manyProperty);
+        if ( ! is_array($items)) {
+            throw new BadRequestHttpException("{$this->manyProperty} must be array");
+        }
+        if (count($items) > $this->manyLimit) {
+            throw new BadRequestHttpException("Request Entity Too Large", 413);
+        }
+        
+
         /* @var $model \yii\db\ActiveRecord */
         $preparedModel = $this->prepareModel([
             'scenario' => $this->scenario,
         ]);
 
-        $request = Yii::$app->getRequest();
-        $items = $request->getBodyParam($this->manyProperty);
         $reload  = $request->get('reload');
 
         $result = [];
