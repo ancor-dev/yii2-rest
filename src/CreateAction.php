@@ -143,7 +143,7 @@ class CreateAction extends _CreateAction
      * The signature of the callable should be:
      *
      * ```php
-     * function ($action, $options) {
+     * function ($options, $action) {
      *     // $action is the action object currently running
      *     // $options is the options array for the ActiveRecord constructor
      * }
@@ -161,7 +161,7 @@ class CreateAction extends _CreateAction
     public function prepareModel($options = [])
     {
         if ($this->prepareModel !== null) {
-            $model = call_user_func($this->prepareModel, $this, $options);
+            $model = call_user_func($this->prepareModel, $options, $this);
         } else {
             $model = new $this->modelClass($options);
         }
