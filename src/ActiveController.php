@@ -59,6 +59,10 @@ class ActiveController extends _ActiveController
         ]);
     } // end actions
 
+    public $serializer = [
+        'class' => 'ancor\rest\Serializer',
+    ];
+
     /**
      * Prepares the data provider that should return the requested collection of the models.
      * @param  ActiveQuery $model

@@ -4,8 +4,9 @@ namespace ancor\rest;
 use Yii;
 use yii\base\Model;
 use yii\helpers\Url;
-use yii\web\ServerErrorHttpException;
 use yii\rest\CreateAction as _CreateAction;
+use yii\web\HttpException;
+use yii\web\ServerErrorHttpException;
 
 /**
  * @inheritdoc
@@ -13,9 +14,80 @@ use yii\rest\CreateAction as _CreateAction;
 class CreateAction extends _CreateAction
 {
     /**
+     * @var boolean enable multiple creation
+     */
+    public $manyEnabled = false;
+    /**
+     * @var integer Limit for creating entities per a request, for multiple creation
+     */
+    public $manyLimit = 10;
+    /**
+     * @var string property name in the body of the request, for multiple creation
+     */
+    public $manyProperty = 'items';
+
+    /**
+     * @var boolean this request using multiple creation?
+     */
+    protected $isMany = false;
+
+    /**
      * @inheritdoc
      */
     public function run()
+    {
+        if ( ! $this->manyEnabled) return $this->createOne();
+
+        $request = Yii::$app->getRequest();
+        $items = $request->post($this->manyProperty);
+        $this->isMany = is_array($items) && count($request->post()) === 1;
+
+        return $this->isMany ? $this->createOne() : $this->createMany();
+    } // end run()
+    
+    /**
+     * Multiple creation
+     */
+    protected function createMany()
+    {
+        if ($this->checkAccess) {
+            call_user_func($this->checkAccess, $this->id);
+        }
+
+        /* @var $model \yii\db\ActiveRecord */
+        $preparedModel = $this->prepareModel([
+            'scenario' => $this->scenario,
+        ]);
+
+        $request = Yii::$app->getRequest();
+        $items = $request->post($this->manyProperty);
+        $reload  = $request->get('reload') || $request->get('expand');
+
+        $result = [];
+        foreach ($items as $one) {
+
+            $model = clone $preparedModel;
+            $model->load($request->getBodyParams(), '');
+
+            if ($model->save()) {
+                if ($reload) {
+                    $modelClass = $this->modelClass;
+                    $model = $modelClass::findOne($model->primaryKey);
+                }
+            } elseif ( ! $model->hasErrors()) {
+                $model = new ServerErrorHttpException('Failed to create the object for unknown reason.');
+            }
+            
+            $result[] = $model;
+        }
+
+        return $result;
+    } // end createMany()
+    
+    /**
+     * Create one entity
+     */
+    protected function createOne()
     {
         if ($this->checkAccess) {
             call_user_func($this->checkAccess, $this->id);
@@ -40,7 +112,7 @@ class CreateAction extends _CreateAction
 
             if ($reload) {
                 $modelClass = $this->modelClass;
-                return $modelClass::findOne($model->primaryKey);
+                $model = $modelClass::findOne($model->primaryKey);
             }
         } elseif ( ! $model->hasErrors()) {
             throw new ServerErrorHttpException('Failed to create the object for unknown reason.');
