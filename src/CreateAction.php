@@ -153,10 +153,14 @@ class CreateAction extends _CreateAction
     public function prepareModel($options = [])
     {
         if ($this->prepareModel !== null) {
-            return call_user_func($this->prepareModel, $this, $options);
+            $model = call_user_func($this->prepareModel, $this, $options);
+        } else {
+            $model = new $this->modelClass($options);
         }
 
-        $model = new $this->modelClass($options);
+        // many fields have default values specified at database
+        $model->loadDefaultValues();
+
         return $model;
     } // end prepareModel()
 
