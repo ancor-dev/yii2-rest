@@ -55,7 +55,7 @@ class Serializer extends _Serializer
             if ($one instanceof Model) {
                 $hasErrors = $one->hasErrors();
                 $status = $hasErrors        ? [422, 'Data Validation Failed'] : (
-                          $type == 'create' ? [201, 'Created']                : (
+                          $type == 'insert' ? [201, 'Created']                : (
                           $type == 'update' ? [200, 'Updated']                : 
                                               [200, 'OK']));
 

@@ -16,46 +16,6 @@ class MultistatusCollection extends Object implements \IteratorAggregate
      * @var array collection of objects
      */
     private $collection = [];
-// 
-//     /**
-//      * @var integer
-//      */
-//     private $position = 0;
-// 
-//     /**
-//      * @inheritdoc
-//      */
-//     public function rewind() {
-//         $this->position = 0;
-//     }
-// 
-//     /**
-//      * @inheritdoc
-//      */
-//     public function current() {
-//         return $this->collection[$this->position];
-//     }
-// 
-//     /**
-//      * @inheritdoc
-//      */
-//     public function key() {
-//         return $this->position;
-//     }
-// 
-//     /**
-//      * @inheritdoc
-//      */
-//     public function next() {
-//         ++$this->position;
-//     }
-// 
-//     /**
-//      * @inheritdoc
-//      */
-//     public function valid() {
-//         return isset($this->collection[$this->position]);
-//     }
 
     /**
      * @inheritdoc
