@@ -3,8 +3,8 @@ namespace ancor\rest;
 
 use Yii;
 use ancor\model\ActiveRecord;
+use yii\helpers\ArrayHelper;
 use yii\rest\Action;
-use yii\rest\findModel;
 use yii\web\BadRequestHttpException;
 use yii\web\HttpException;
 use yii\web\MethodNotAllowedHttpException;
@@ -51,7 +51,7 @@ class UpdateCollectionAction extends Action
      * ```php
      * function (ActiveRecord $model, $action) {
      *     // $model is instance of ActiveRecord model.
-     *     // It is can be new row(created by prepareModel()) or finded model(created by findModel()).
+     *     // It is can be new row(created by prepareModel()) or finded model(created by tryFindModel()).
      *     // $action is the action object currently running
      *
      *     $model->user_id = Yii::$app->request->get('user_id');
@@ -68,7 +68,7 @@ class UpdateCollectionAction extends Action
     public function init()
     {
         if ( ! $this->enable) {
-            throw new MethodNotAllowedHttpException("Method Not Allowed.");
+            throw new MethodNotAllowedHttpException("Method Not Allowed");
         }
 
         $this->items = Yii::$app->getRequest()->getBodyParam($this->property);
@@ -89,17 +89,16 @@ class UpdateCollectionAction extends Action
      */
     public function run()
     {
-        $this->parseRequest();
-        
         $result = [];
+
         foreach ($this->items as $one) {
 
             // try to find an existing model, or create new
-            $model = $this->findModel($one);
+            $model = $this->tryFindModel($one);
             if ( ! $model) $model = $this->prepareModel();
 
             if ($this->preProcessingModel !== null) {
-                $model = call_user_func($this->preProcessingModel, $model, $this);
+                call_user_func($this->preProcessingModel, $model, $this);
             }
 
             try {
@@ -123,7 +122,7 @@ class UpdateCollectionAction extends Action
     
     /**
      * @var callable a PHP callable that will be called to return the model corresponding
-     * to the specified primary key value. If not set, [[findModel()]] will be used instead.
+     * to the specified primary key value. If not set, [[tryFindModel()]] will be used instead.
      * The signature of the callable should be:
      *
      * ```php
@@ -136,14 +135,14 @@ class UpdateCollectionAction extends Action
      *
      * The callable should return the model found, or throw an exception if not found.
      */
-    public $findModel;
+    public $tryFindModel;
 
     /**
      * Find model and make instance
      * @param  array $data hash-array with columns
      * @return ActiveRecordInterface|null
      */
-    public function findModel(array $data)
+    public function tryFindModel(array $data)
     {
         static $keys, $countKeys, $modelClass;
 
@@ -157,8 +156,8 @@ class UpdateCollectionAction extends Action
             $countKeys = count($keys);
         }
 
-        if ($this->findModel !== null) {
-            $model = call_user_func($this->findModel, $data, $this);
+        if ($this->tryFindModel !== null) {
+            $model = call_user_func($this->tryFindModel, $data, $this);
         } else {
             $pk = array_intersect_key($data, $keys);
             if (count($pk) != $countKeys) return null;
@@ -170,7 +169,7 @@ class UpdateCollectionAction extends Action
         $model->scenario = $this->updateScenario;
 
         return $model;
-    } // end findModel()
+    } // end tryFindModel()
 
     /**
      * @var callable a PHP callable that will be called to prepare an ActiveRecord model

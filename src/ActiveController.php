@@ -96,9 +96,9 @@ class ActiveController extends _ActiveController
      */
     public function verbs()
     {
-        return ArrayHelper::merge(parent::verbs(), [
-            'create-many' => ['POST'],
-        ]);
+        return parent::verbs() + [
+            'update-collection' => ['PUT', 'PUTCH'],
+        ];
     } // end verbs
 
     /**

@@ -16,7 +16,7 @@ class UrlRule extends _UrlRule
      */
     public function init()
     {
-        $this->patterns['POST many'] = 'create-many';
+        $this->patterns = ['PUT,PATCH' => 'update-collection'] + $this->patterns;
         parent::init();
     } // end init()
 
