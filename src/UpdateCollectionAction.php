@@ -89,13 +89,12 @@ class UpdateCollectionAction extends Action
      */
     public function run()
     {
-        $result = [];
+        $collection = new MultistatusCollection();
 
         foreach ($this->items as $one) {
 
             // try to find an existing model, or create new
-            $model = $this->tryFindModel($one);
-            if ( ! $model) $model = $this->prepareModel();
+            $model = $this->tryFindModel($one) ?: $this->prepareModel();
 
             if ($this->preProcessingModel !== null) {
                 call_user_func($this->preProcessingModel, $model, $this);
@@ -106,18 +105,19 @@ class UpdateCollectionAction extends Action
                     call_user_func($this->checkAccess, $this->id, $model);
                 }
 
+                $isNewRecord = $model->isNewRecord;
                 $model->load($one, '');
                 if ($model->save() === false && !$model->hasErrors()) {
                     throw new ServerErrorHttpException('Failed to update the object for unknown reason.');
                 }
-            } catch (HttpException $e) {
-                $result = $e;
-            }
 
-            $result[] = $model;
+                $collection->{$isNewRecord ? 'inserted' : 'updated'}($model);
+            } catch (HttpException $e) {
+                $collection->exception($e);
+            }
         }
 
-        return $result;
+        return $collection;
     }
     
     /**

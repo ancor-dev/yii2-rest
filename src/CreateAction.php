@@ -79,7 +79,7 @@ class CreateAction extends _CreateAction
 
         $reload  = $request->get('reload');
 
-        $result = [];
+        $collection = new MultistatusCollection();
         foreach ($items as $one) {
 
             $model = clone $preparedModel;
@@ -91,13 +91,15 @@ class CreateAction extends _CreateAction
                     $model = $modelClass::findOne($model->primaryKey);
                 }
             } elseif ( ! $model->hasErrors()) {
-                $model = new ServerErrorHttpException('Failed to create the object for unknown reason.');
+                $e = new ServerErrorHttpException('Failed to create the object for unknown reason.');
+                $collection->exception($e);
+                continue;
             }
             
-            $result[] = $model;
+            $collection->inserted($model);
         }
 
-        return $result;
+        return $collection;
     } // end createMany()
     
     /**

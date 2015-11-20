@@ -28,16 +28,13 @@ class Serializer extends _Serializer
      */
     public function serialize($data)
     {
-        $action = Yii::$app->controller->action;
-        $isMany = isset($action->isMany) ? $action->isMany : false;
-
         if ($data instanceof Model && $data->hasErrors()) {
             return $this->serializeModelErrors($data);
         } elseif ($data instanceof Arrayable) {
             return $this->serializeModel($data);
         } elseif ($data instanceof DataProviderInterface) {
             return $this->serializeDataProvider($data);
-        } elseif (is_array($data) && $isMany) {
+        } elseif ($data instanceof MultistatusCollection) {
             return $this->serializeMulticreation($data);
         } else {
             return $data;
@@ -49,16 +46,21 @@ class Serializer extends _Serializer
      * @param Model $model
      * @return array the array representation of the errors
      */
-    protected function serializeMulticreation($model)
+    protected function serializeMulticreation($models)
     {
         $result = [];
 
-        foreach ($model as $one) {
+        foreach ($models as list($type, $one)) {
+
             if ($one instanceof Model) {
                 $hasErrors = $one->hasErrors();
+                $status = $hasErrors        ? [422, 'Data Validation Failed'] : (
+                          $type == 'create' ? [201, 'Created']                : (
+                          $type == 'update' ? [200, 'Updated']                : 
+                                              [200, 'OK']));
 
                 $result[] = [
-                    'status' => $hasErrors ? [422, 'Data Validation Failed.'] : [201, 'Created.'],
+                    'status' => $status,
                     'data' => $hasErrors ?
                               $this->serializeModelErrors($one) :
                               $this->serializeModel($one),
@@ -70,14 +72,14 @@ class Serializer extends _Serializer
                 ];
             } else {
                 $result[] = [
-                    'status' => [500, 'Internal Server Error.'],
+                    'status' => [500, 'Internal Server Error'],
                     'data'   => null,
                 ];
             }
         }
 
         // Status is set at the end to rewrite previous status
-        $this->response->setStatusCode(207, 'Multi-Status.');
+        $this->response->setStatusCode(207, 'Multi-Status');
 
         return $result;
     }
