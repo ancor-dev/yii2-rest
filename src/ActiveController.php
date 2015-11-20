@@ -43,6 +43,13 @@ class ActiveController extends _ActiveController
             'update'      => [
                 'class' => 'ancor\rest\UpdateAction',
             ],
+            'update-collection' => [
+                'class'          => 'ancor\rest\UpdateCollectionAction',
+                'modelClass'     => $this->modelClass,
+                'updateScenario' => $this->updateScenario,
+                'createScenario' => $this->createScenario,
+                'checkAccess'    => [$this, 'checkAccess'],
+            ],
             'delete'      => [
                 'class' => 'ancor\rest\DeleteAction',
             ],

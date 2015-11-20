@@ -158,7 +158,7 @@ class CreateAction extends _CreateAction
      * Prepare a model instance
      * @return ActiveRecord
      */
-    public function prepareModel($options = [])
+    public function prepareModel(array $options = [])
     {
         if ($this->prepareModel !== null) {
             $model = call_user_func($this->prepareModel, $options, $this);
