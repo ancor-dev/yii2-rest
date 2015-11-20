@@ -50,7 +50,7 @@ class Serializer extends _Serializer
     {
         $result = [];
 
-        foreach ($models as list($type, $one)) {
+        foreach ($models->iterator as list($type, $one)) {
 
             if ($one instanceof Model) {
                 $hasErrors = $one->hasErrors();

@@ -1,6 +1,7 @@
 <?php
 namespace ancor\rest;
 
+use yii\base\Object;
 use yii\db\ActiveRecordInterface;
 
 /**
@@ -9,53 +10,61 @@ use yii\db\ActiveRecordInterface;
  *
  * entities can be only add. Can not be removed.
  */
-class MultistatusCollection implements \Iterator
+class MultistatusCollection extends Object implements \IteratorAggregate
 {
     /**
      * @var array collection of objects
      */
     private $collection = [];
-
-    /**
-     * @var integer
-     */
-    private $position = 0;
+// 
+//     /**
+//      * @var integer
+//      */
+//     private $position = 0;
+// 
+//     /**
+//      * @inheritdoc
+//      */
+//     public function rewind() {
+//         $this->position = 0;
+//     }
+// 
+//     /**
+//      * @inheritdoc
+//      */
+//     public function current() {
+//         return $this->collection[$this->position];
+//     }
+// 
+//     /**
+//      * @inheritdoc
+//      */
+//     public function key() {
+//         return $this->position;
+//     }
+// 
+//     /**
+//      * @inheritdoc
+//      */
+//     public function next() {
+//         ++$this->position;
+//     }
+// 
+//     /**
+//      * @inheritdoc
+//      */
+//     public function valid() {
+//         return isset($this->collection[$this->position]);
+//     }
 
     /**
      * @inheritdoc
      */
-    public function rewind() {
-        $this->position = 0;
-    }
-
-    /**
-     * @inheritdoc
-     */
-    public function current() {
-        return $this->collection[$this->position];
-    }
-
-    /**
-     * @inheritdoc
-     */
-    public function key() {
-        return $this->position;
-    }
-
-    /**
-     * @inheritdoc
-     */
-    public function next() {
-        ++$this->position;
-    }
-
-    /**
-     * @inheritdoc
-     */
-    public function valid() {
-        return isset($this->collection[$this->position]);
-    }
-
+    public function getIterator()
+    {
+        return new \ArrayIterator($this->collection);
+    } // end getIterator()
+    
 
 
     /**
