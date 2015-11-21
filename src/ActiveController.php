@@ -97,7 +97,7 @@ class ActiveController extends _ActiveController
     public function verbs()
     {
         return parent::verbs() + [
-            'update-collection' => ['PUT', 'PUTCH'],
+            'update-collection' => ['PATCH'],
         ];
     } // end verbs
 
