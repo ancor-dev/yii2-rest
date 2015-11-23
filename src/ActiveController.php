@@ -3,9 +3,7 @@ namespace ancor\rest;
 
 use ancor\data\ActiveDataProvider;
 use ancor\model\ActiveRecord;
-use yii\db\ActiveQuery;
-// use yii\data\ActiveDataProvider; // current dir
-
+use yii\db\QueryInterface;
 use yii\helpers\ArrayHelper;
 use yii\rest\ActiveController as _ActiveController;
 
@@ -65,11 +63,11 @@ class ActiveController extends _ActiveController
 
     /**
      * Prepares the data provider that should return the requested collection of the models.
-     * @param  ActiveQuery $model
+     * @param  QueryInterface $model
      * @param  array       $customOptions you can override default options with the help of it
      * @return ActiveDataProvider
      */
-    public static function prepareDataProvider(ActiveQuery $model, $customOptions = [])
+    public static function prepareDataProvider(QueryInterface $model, $customOptions = [])
     {
         /**
          * @var array Options for all Data Providers
