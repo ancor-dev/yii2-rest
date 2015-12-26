@@ -6,6 +6,7 @@ use ancor\model\ActiveRecord;
 use yii\db\QueryInterface;
 use yii\helpers\ArrayHelper;
 use yii\rest\ActiveController as _ActiveController;
+use yii\web\NotFoundHttpException;
 
 /**
  * @inheritdoc
