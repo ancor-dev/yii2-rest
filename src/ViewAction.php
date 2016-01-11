@@ -20,7 +20,7 @@ class ViewAction extends _ViewAction
     //     FindModelExtraBehavior::className(),
     //   ]);
     // } // end behaviors()
-    
+
 
     /**
      * @inheritdoc
@@ -37,5 +37,5 @@ class ViewAction extends _ViewAction
 
         return $responseReplacement === null ? $model : $responseReplacement;
     } // end run()
-    
+
 }

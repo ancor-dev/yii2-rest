@@ -29,17 +29,18 @@ class ActiveController extends _ActiveController
     public function actions()
     {
         $actions = parent::actions();
+
         return ArrayHelper::merge($actions, [
-            'index'       => [
+            'index'             => [
                 'class' => 'ancor\rest\IndexAction',
             ],
-            'view'        => [
+            'view'              => [
                 'class' => 'ancor\rest\ViewAction',
             ],
-            'create'      => [
+            'create'            => [
                 'class' => 'ancor\rest\CreateAction',
             ],
-            'update'      => [
+            'update'            => [
                 'class' => 'ancor\rest\UpdateAction',
             ],
             'update-collection' => [
@@ -49,10 +50,10 @@ class ActiveController extends _ActiveController
                 'createScenario' => $this->createScenario,
                 'checkAccess'    => [$this, 'checkAccess'],
             ],
-            'delete'      => [
+            'delete'            => [
                 'class' => 'ancor\rest\DeleteAction',
             ],
-            'options'     => [
+            'options'           => [
                 'class' => 'ancor\rest\OptionsAction',
             ],
         ]);
@@ -64,8 +65,10 @@ class ActiveController extends _ActiveController
 
     /**
      * Prepares the data provider that should return the requested collection of the models.
+     *
      * @param  QueryInterface $model
-     * @param  array       $customOptions you can override default options with the help of it
+     * @param  array          $customOptions you can override default options with the help of it
+     *
      * @return ActiveDataProvider
      */
     public static function prepareDataProvider(QueryInterface $model, $customOptions = [])
@@ -102,8 +105,11 @@ class ActiveController extends _ActiveController
 
     /**
      * Find the model and throw exception if not found
-     * @param  integer      $id the model id
-     * @return ActiveRecord     instance of model
+     *
+     * @param  integer $id the model id
+     *
+     * @return \ancor\model\ActiveRecord instance of model
+     * @throws \yii\web\NotFoundHttpException
      */
     protected function findModel($id)
     {
@@ -111,10 +117,10 @@ class ActiveController extends _ActiveController
          * @var array
          */
         static $model = [];
-        if ( ! isset($model[$id])) {
+        if ( !isset($model[$id])) {
             $modelClass = $this->modelClass;
             $model[$id] = $modelClass::findOne($id);
-            if ( ! $model[$id]) {
+            if ( !$model[$id]) {
                 throw new NotFoundHttpException("Object not found: $id");
             }
         }

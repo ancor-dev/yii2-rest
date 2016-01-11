@@ -22,8 +22,9 @@ class Serializer extends _Serializer
      *
      * added types:
      * + multiple creation. It's array that return from CreateAction with multiple creation scenario
-     * 
+     *
      * @param mixed $data the data to be serialized.
+     *
      * @return mixed the converted data.
      */
     public function serialize($data)
@@ -43,7 +44,9 @@ class Serializer extends _Serializer
 
     /**
      * Serializes response from multiple creation
+     *
      * @param Model $model
+     *
      * @return array the array representation of the errors
      */
     protected function serializeMulticreation($models)
@@ -54,16 +57,14 @@ class Serializer extends _Serializer
 
             if ($one instanceof Model) {
                 $hasErrors = $one->hasErrors();
-                $status = $hasErrors        ? [422, 'Data Validation Failed'] : (
-                          $type == 'insert' ? [201, 'Created']                : (
-                          $type == 'update' ? [200, 'Updated']                : 
-                                              [200, 'OK']));
+                $status    = $hasErrors ? [422, 'Data Validation Failed'] : ($type == 'insert' ? [
+                    201,
+                    'Created',
+                ] : ($type == 'update' ? [200, 'Updated'] : [200, 'OK']));
 
                 $result[] = [
                     'status' => $status,
-                    'data' => $hasErrors ?
-                              $this->serializeModelErrors($one) :
-                              $this->serializeModel($one),
+                    'data'   => $hasErrors ? $this->serializeModelErrors($one) : $this->serializeModel($one),
                 ];
             } elseif ($one instanceof HttpException) {
                 $result[] = [

@@ -24,11 +24,11 @@ class MultistatusCollection extends Object implements \IteratorAggregate
     {
         return new \ArrayIterator($this->collection);
     } // end getIterator()
-    
 
 
     /**
      * Add model with flag 'insert'
+     *
      * @param  ActiveRecordInterface $model
      */
     public function inserted(ActiveRecordInterface $model)
@@ -38,6 +38,7 @@ class MultistatusCollection extends Object implements \IteratorAggregate
 
     /**
      * Add model with flag 'update'
+     *
      * @param  ActiveRecordInterface $model
      */
     public function updated(ActiveRecordInterface $model)
@@ -47,11 +48,12 @@ class MultistatusCollection extends Object implements \IteratorAggregate
 
     /**
      * Add model with flag 'exception'
+     *
      * @param  ActiveRecordInterface $model
      */
     public function exception(\Exception $e)
     {
         $this->collection[] = ['exception', $e];
     } // end exception()
-    
+
 } // end class Collection

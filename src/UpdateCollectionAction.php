@@ -1,8 +1,8 @@
 <?php
 namespace ancor\rest;
 
-use Yii;
 use ancor\model\ActiveRecord;
+use Yii;
 use yii\helpers\ArrayHelper;
 use yii\rest\Action;
 use yii\web\BadRequestHttpException;
@@ -37,7 +37,7 @@ class UpdateCollectionAction extends Action
      * @var string property name in the body of the request
      */
     public $property = 'items';
-    
+
     /**
      * @var array items from request
      */
@@ -67,13 +67,13 @@ class UpdateCollectionAction extends Action
      */
     public function init()
     {
-        if ( ! $this->enable) {
+        if ( !$this->enable) {
             throw new MethodNotAllowedHttpException("Method Not Allowed");
         }
 
         $this->items = Yii::$app->getRequest()->getBodyParam($this->property);
 
-        if ( ! is_array($this->items)) {
+        if ( !is_array($this->items)) {
             throw new BadRequestHttpException("{$this->property} must be array");
         }
 
@@ -119,7 +119,7 @@ class UpdateCollectionAction extends Action
 
         return $collection;
     }
-    
+
     /**
      * @var callable a PHP callable that will be called to return the model corresponding
      * to the specified primary key value. If not set, [[tryFindModel()]] will be used instead.
@@ -139,7 +139,9 @@ class UpdateCollectionAction extends Action
 
     /**
      * Find model and make instance
+     *
      * @param  array $data hash-array with columns
+     *
      * @return ActiveRecordInterface|null
      */
     public function tryFindModel(array $data)
@@ -151,8 +153,8 @@ class UpdateCollectionAction extends Action
             /* @var $modelClass ActiveRecordInterface */
             $modelClass = $this->modelClass;
 
-            $keys = $modelClass::primaryKey();
-            $keys = array_flip($keys); // the names of the keys needed for intersect_key
+            $keys      = $modelClass::primaryKey();
+            $keys      = array_flip($keys); // the names of the keys needed for intersect_key
             $countKeys = count($keys);
         }
 
@@ -165,7 +167,7 @@ class UpdateCollectionAction extends Action
             $model = $modelClass::findOne($pk);
         }
 
-        if ( ! $model) return null;
+        if ( !$model) return null;
         $model->scenario = $this->updateScenario;
 
         return $model;
@@ -184,7 +186,6 @@ class UpdateCollectionAction extends Action
      * ```
      *
      * The callable should return an instance of [[ActiveRecord]].
-
      */
     public $prepareModel;
 
@@ -207,5 +208,5 @@ class UpdateCollectionAction extends Action
 
         return $model;
     } // end prepareModel()
-    
+
 } // end class UpdateCollectionAction

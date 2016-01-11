@@ -3,8 +3,8 @@ namespace ancor\rest;
 
 use Yii;
 use yii\db\ActiveRecord;
-use yii\web\ServerErrorHttpException;
 use yii\rest\UpdateAction as _UpdateAction;
+use yii\web\ServerErrorHttpException;
 
 /**
  * added 'reload' attribute
@@ -45,5 +45,5 @@ class UpdateAction extends _UpdateAction
 
         return $model;
     }
-    
+
 }

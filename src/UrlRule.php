@@ -2,7 +2,6 @@
 namespace ancor\rest;
 
 use Yii;
-use yii\helpers\ArrayHelper;
 use yii\rest\UrlRule as _UrlRule;
 
 /**

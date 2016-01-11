@@ -2,11 +2,9 @@
 namespace ancor\rest;
 
 use Yii;
-use yii\base\Model;
 use yii\helpers\Url;
 use yii\rest\CreateAction as _CreateAction;
 use yii\web\BadRequestHttpException;
-use yii\web\HttpException;
 use yii\web\ServerErrorHttpException;
 
 /**
@@ -45,15 +43,15 @@ class CreateAction extends _CreateAction
      */
     public function run()
     {
-        if ( ! $this->manyEnabled) return $this->createOne();
+        if ( !$this->manyEnabled) return $this->createOne();
 
-        $request = Yii::$app->getRequest();
-        $items = $request->getBodyParam($this->manyProperty);
+        $request      = Yii::$app->getRequest();
+        $items        = $request->getBodyParam($this->manyProperty);
         $this->isMany = is_array($items) && count($request->getBodyParams()) === 1;
 
         return $this->isMany ? $this->createMany() : $this->createOne();
     } // end run()
-    
+
     /**
      * Multiple creation
      */
@@ -64,20 +62,21 @@ class CreateAction extends _CreateAction
         }
 
         $items = Yii::$app->getRequest()->getBodyParam($this->manyProperty);
-        if ( ! is_array($items)) {
+        if ( !is_array($items)) {
             throw new BadRequestHttpException("{$this->manyProperty} must be array");
         }
         if (count($items) > $this->manyLimit) {
             throw new BadRequestHttpException("Request Entity Too Large", 413);
         }
-        
+
 
         /* @var $model \yii\db\ActiveRecord */
         $preparedModel = $this->prepareModel([
             'scenario' => $this->scenario,
         ]);
 
-        $reload  = $request->get('reload');
+        $request = Yii::$app->getRequest();
+        $reload = $request->get('reload');
 
         $collection = new MultistatusCollection();
         foreach ($items as $one) {
@@ -88,20 +87,20 @@ class CreateAction extends _CreateAction
             if ($model->save()) {
                 if ($reload) {
                     $modelClass = $this->modelClass;
-                    $model = $modelClass::findOne($model->primaryKey);
+                    $model      = $modelClass::findOne($model->primaryKey);
                 }
-            } elseif ( ! $model->hasErrors()) {
+            } elseif ( !$model->hasErrors()) {
                 $e = new ServerErrorHttpException('Failed to create the object for unknown reason.');
                 $collection->exception($e);
                 continue;
             }
-            
+
             $collection->inserted($model);
         }
 
         return $collection;
     } // end createMany()
-    
+
     /**
      * Create one entity
      */
@@ -130,9 +129,9 @@ class CreateAction extends _CreateAction
 
             if ($reload) {
                 $modelClass = $this->modelClass;
-                $model = $modelClass::findOne($model->primaryKey);
+                $model      = $modelClass::findOne($model->primaryKey);
             }
-        } elseif ( ! $model->hasErrors()) {
+        } elseif ( !$model->hasErrors()) {
             throw new ServerErrorHttpException('Failed to create the object for unknown reason.');
         }
 
@@ -152,7 +151,6 @@ class CreateAction extends _CreateAction
      * ```
      *
      * The callable should return an instance of [[ActiveRecord]].
-
      */
     public $prepareModel;
 

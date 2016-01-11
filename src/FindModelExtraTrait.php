@@ -50,9 +50,9 @@ trait FindModelExtraTrait
      *     // return other response
      *     if ($model->options & $model::OPT_SOME_OPT) {
      *         Yii::$app->request->setStatusCode(400);
-     *         
+     *
      *         return [
-     *             'error' => $model::ERR_SOME_ERROR, 
+     *             'error' => $model::ERR_SOME_ERROR,
      *         ];
      *     }
      * ```
@@ -67,7 +67,7 @@ trait FindModelExtraTrait
 
         return null;
     } // end afterFind()
-    
+
 
     public function findModel($id)
     {
