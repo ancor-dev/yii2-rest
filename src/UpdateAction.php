@@ -2,7 +2,6 @@
 namespace ancor\rest;
 
 use Yii;
-use yii\base\Model;
 use yii\db\ActiveRecord;
 use yii\web\ServerErrorHttpException;
 use yii\rest\UpdateAction as _UpdateAction;
@@ -12,16 +11,32 @@ use yii\rest\UpdateAction as _UpdateAction;
  */
 class UpdateAction extends _UpdateAction
 {
+    use FindModelExtraTrait;
+
     /**
      * @inheritdoc
      */
     public function run($id)
     {
-        $model = parent::run($id);
+        /* @var $model ActiveRecord */
+        $model = $this->findModel($id);
+
+        if ($this->checkAccess) {
+            call_user_func($this->checkAccess, $this->id, $model);
+        }
+
+        $responseReplacement = $this->afterFind($model);
+        if ( !$responseReplacement) return $responseReplacement;
+
+        $model->scenario = $this->scenario;
+        $model->load(Yii::$app->getRequest()->getBodyParams(), '');
+        if ($model->save() === false && !$model->hasErrors()) {
+            throw new ServerErrorHttpException('Failed to update the object for unknown reason.');
+        }
 
         // do reload model from database after successful insert?
         $request = Yii::$app->request;
-        $reload  = $request->get('reload') || $request->get('expand');
+        $reload  = $request->get('reload');
 
         if ($reload) {
             $modelClass = $this->modelClass;
@@ -31,39 +46,4 @@ class UpdateAction extends _UpdateAction
         return $model;
     }
     
-    /**
-     * @var callable a PHP callable that will be called after model successful found
-     * to additional checking operations. You can throw some exceptions from it
-     * if the this callable will return 'false', NotFoundHttpExceptions will be throw next
-     *
-     * ```php
-     * function ($model, $action) {
-     *     if ($model->status == $model::STATUS_DELETED) return false; // Not found
-     *
-     *     if ($model->checking == 2) { // example
-     *
-     *         throw new SomeException(...);
-     *     }
-     * }
-     * ```
-     */
-    public $afterFind;
-
-    public function afterFind()
-    {
-        if ($this->findModel !== null) {
-            return call_user_func($this->findModel, $id, $this);
-        }
-    }
-
-    public function findModel($id)
-    {
-        $model = parent::findModel($id);
-
-        if ($this->afterFind($model, $this) === false) {
-            throw new NotFoundHttpException("Object not found: $id");
-        }
-
-        return $model;
-    }
 }

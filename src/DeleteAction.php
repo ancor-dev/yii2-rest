@@ -3,45 +3,38 @@ namespace ancor\rest;
 
 use Yii;
 use yii\rest\DeleteAction as _DeleteAction;
+use yii\web\ServerErrorHttpException;
 
 /**
  * @inheritdoc
  */
 class DeleteAction extends _DeleteAction
 {
+    use FindModelExtraTrait;
+
     /**
-     * @var callable a PHP callable that will be called after model successful found
-     * to additional checking operations. You can throw some exceptions from it
-     * if the this callable will return 'false', NotFoundHttpExceptions will be throw next
+     * afterFind added
      *
-     * ```php
-     * function ($model, $action) {
-     *     if ($model->status == $model::STATUS_DELETED) return false; // Not found
+     * @param mixed $id
      *
-     *     if ($model->checking == 2) { // example
-     *
-     *         throw new SomeException(...);
-     *     }
-     * }
-     * ```
+     * @return mixed|void
+     * @throws \yii\web\ServerErrorHttpException
      */
-    public $afterFind;
-
-    public function afterFind($model)
+    public function run($id)
     {
-        if ($this->afterFind !== null) {
-            return call_user_func($this->afterFind, $model, $this);
-        }
-    }
+        $model = $this->findModel($id);
 
-    public function findModel($id)
-    {
-        $model = parent::findModel($id);
-
-        if ($this->afterFind($model, $this) === false) {
-            throw new NotFoundHttpException("Object not found: $id");
+        if ($this->checkAccess) {
+            call_user_func($this->checkAccess, $this->id, $model);
         }
 
-        return $model;
+        $responseReplacement = $this->afterFind($model);
+        if ( !$responseReplacement) return $responseReplacement;
+
+        if ($model->delete() === false) {
+            throw new ServerErrorHttpException('Failed to delete the object for unknown reason.');
+        }
+
+        Yii::$app->getResponse()->setStatusCode(204);
     }
 }

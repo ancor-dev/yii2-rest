@@ -3,3 +3,4 @@ composer.lock
 /info.txt
 *.sublime-*
 .directory
+.idea

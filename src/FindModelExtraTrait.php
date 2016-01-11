@@ -2,7 +2,7 @@
 namespace ancor\rest;
 
 use Yii;
-use yii\base\Behavior;
+use yii\web\NotFoundHttpException;
 
 /**
  * implement extra findModel behavior
@@ -31,11 +31,13 @@ trait FindModelExtraTrait
      */
     public $findModelCondition;
 
-    public function findModelCondition()
+    public function findModelCondition($model)
     {
         if ($this->findModelCondition !== null) {
-            return call_user_func($this->findModelCondition, $id, $this);
+            return call_user_func($this->findModelCondition, $model, $this);
         }
+
+        return null;
     }
 
     /**
@@ -57,11 +59,13 @@ trait FindModelExtraTrait
      */
     public $afterFind;
 
-    public function afterFind()
+    public function afterFind($model)
     {
         if ($this->afterFind !== null) {
-            return call_user_func($this->afterFind, $id, $this);
+            return call_user_func($this->afterFind, $model, $this);
         }
+
+        return null;
     } // end afterFind()
     
 
@@ -69,7 +73,7 @@ trait FindModelExtraTrait
     {
         $model = parent::findModel($id);
 
-        if ($this->findModelCondition($model, $this) === false) {
+        if ($this->findModelCondition($model) === false) {
             throw new NotFoundHttpException("Object not found: $id");
         }
 
