@@ -29,7 +29,7 @@ class DeleteAction extends _DeleteAction
         }
 
         $responseReplacement = $this->afterFind($model);
-        if ( !$responseReplacement) return $responseReplacement;
+        if ($responseReplacement !== null) return $responseReplacement;
 
         if ($model->delete() === false) {
             throw new ServerErrorHttpException('Failed to delete the object for unknown reason.');
