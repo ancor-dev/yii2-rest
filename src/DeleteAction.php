@@ -27,10 +27,10 @@ class DeleteAction extends _DeleteAction
      */
     public $afterFind;
 
-    public function afterFind()
+    public function afterFind($model)
     {
-        if ($this->findModel !== null) {
-            return call_user_func($this->findModel, $id, $this);
+        if ($this->afterFind !== null) {
+            return call_user_func($this->afterFind, $model, $this);
         }
     }
 

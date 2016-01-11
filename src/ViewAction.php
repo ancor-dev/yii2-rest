@@ -9,39 +9,33 @@ use yii\rest\ViewAction as _ViewAction;
  */
 class ViewAction extends _ViewAction
 {
+    use FindModelExtraTrait;
+
+    // /**
+    //  * @inheritdoc
+    //  */
+    // public function behaviors()
+    // {
+    //   return ArrayHelper::merge(parent::behaviors(), [
+    //     FindModelExtraBehavior::className(),
+    //   ]);
+    // } // end behaviors()
+    
+
     /**
-     * @var callable a PHP callable that will be called after model successful found
-     * to additional checking operations. You can throw some exceptions from it
-     * if the this callable will return 'false', NotFoundHttpExceptions will be throw next
-     *
-     * ```php
-     * function ($model, $action) {
-     *     if ($model->status == $model::STATUS_DELETED) return false; // Not found
-     *
-     *     if ($model->checking == 2) { // example
-     *
-     *         throw new SomeException(...);
-     *     }
-     * }
-     * ```
+     * @inheritdoc
      */
-    public $afterFind;
-
-    public function afterFind()
+    public function run($id)
     {
-        if ($this->findModel !== null) {
-            return call_user_func($this->findModel, $id, $this);
-        }
-    }
+        $model = $this->findModel($id);
 
-    public function findModel($id)
-    {
-        $model = parent::findModel($id);
-
-        if ($this->afterFind($model, $this) === false) {
-            throw new NotFoundHttpException("Object not found: $id");
+        if ($this->checkAccess) {
+            call_user_func($this->checkAccess, $this->id, $model);
         }
 
-        return $model;
-    }
+        $responseReplacement = $this->afterFind($model);
+
+        return $responseReplacement === null ? $model : $responseReplacement;
+    } // end run()
+    
 }
