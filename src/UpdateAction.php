@@ -26,7 +26,7 @@ class UpdateAction extends _UpdateAction
         }
 
         $responseReplacement = $this->afterFind($model);
-        if ( !$responseReplacement) return $responseReplacement;
+        if ($responseReplacement !== null) return $responseReplacement;
 
         $model->scenario = $this->scenario;
         $model->load(Yii::$app->getRequest()->getBodyParams(), '');
