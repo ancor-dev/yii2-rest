@@ -94,6 +94,19 @@ class ActiveController extends _ActiveController
     } // end prepareDataProvider
 
     /**
+     * Get `fields` and `extraFields` for model
+     *
+     * @return array[]
+     */
+    public static function getRequestedFields()
+    {
+        static $serializer;
+        if (!$serializer) $serializer = new Serializer();
+
+        return $serializer->getRequestedFields();
+    }
+
+    /**
      * @inheritdoc
      */
     public function verbs()
