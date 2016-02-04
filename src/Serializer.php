@@ -85,4 +85,11 @@ class Serializer extends _Serializer
         return $result;
     }
 
+    /**
+     * make public, for access from any where
+     */
+    public function getRequestedFields()
+    {
+        return parent::getRequestedFields();
+    }
 } // end class Serializer
